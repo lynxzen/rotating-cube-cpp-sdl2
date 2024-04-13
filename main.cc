@@ -5,10 +5,12 @@ struct vec3 {
     float x, y, z;
 };
 
+// represents a connection between two points, useful for creating lines
 struct connection {
     int a,b;
 };
 
+// rotation function based off rotation matrix https://en.wikipedia.org/wiki/Rotation_matrix
 void rotate(vec3& point, float x = 1, float y = 1, float z = 1) {
     float rad = 0;
 
@@ -25,6 +27,7 @@ void rotate(vec3& point, float x = 1, float y = 1, float z = 1) {
     point.y = std::sin(rad) * point.x + std::cos(rad) * point.y;
 }
 
+// line draw function, sends it to renderer
 void line(Screen& screen, float x1, float y1, float x2, float y2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
@@ -40,6 +43,7 @@ void line(Screen& screen, float x1, float y1, float x2, float y2) {
 int main() {
     Screen screen;
 
+    // the 8 corners of a cube
     std::vector<vec3> points {
         {100, 100, 100},
         {200, 100, 100},
@@ -52,6 +56,7 @@ int main() {
         {100, 200, 200}
     };
 
+    // tells what points should be connected together, used for making the line later
     std::vector<connection> connections {
         {0, 4},
         {1, 5},
@@ -70,20 +75,21 @@ int main() {
 
     };
 
-    //centroid 
+    // centroid 
     vec3 c;
 
+    // finding the centroid
     for (auto& p : points) {
         c.x += p.x;
         c.y += p.y;
         c.z += p.z;
     }
-    
     c.x /= points.size();
     c.y /= points.size();
     c.z /= points.size();
 
     while(true) {
+        // applying centroid to ensure correct rotation on cube's center
         for (auto& p : points) {
             p.x -= c.x;
             p.y -= c.y;
@@ -95,10 +101,11 @@ int main() {
             screen.pixel(p.x, p.y);
         }
         
+        // draw the lines between connections
         for (auto& conn: connections) {
             line(screen, points[conn.a].x, points[conn.a].y, points[conn.b].x, points[conn.b].y);
         }
-
+        
         screen.show();
         screen.clear();
         screen.input();

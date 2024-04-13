@@ -4,6 +4,7 @@
 
 class Screen {
 private:
+    // basic SDL properties needed
     SDL_Event e;
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -24,26 +25,32 @@ public:
         SDL_DestroyWindow(window);
     }
 
+    // create the pixel and send to the vector of pixels
     void pixel(float x, float y) {
         points.emplace_back(SDL_FPoint{x * scale, y * scale});
     }
 
     void show() {
+        // draw black screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
+        // draw white pixels
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         for (auto& point : points) {
             SDL_RenderDrawPointF(renderer, point.x, point.y);
         }
 
+        // update the screen
         SDL_RenderPresent(renderer);
     }
 
+    // clear the screen if you'd like
     void clear() {
         points.clear();
     }
 
+    // event handling
     void input() {
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
